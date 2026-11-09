@@ -1,98 +1,190 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+const colors = {
+  background: '#FFF8F6',
+  border: '#F3DDE1',
+  muted: '#8C777E',
+  pink: '#C5235D',
+  text: '#30232A',
+  white: '#FFFFFF',
+};
 
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
+const shortcuts = ['Boletos', 'Biblioteca', 'Carteirinha', 'Secretaria'];
+const notices = [
+  { title: '[Título do aviso]', detail: 'Há 2 horas · Coordenação' },
+  { title: '[Título do aviso]', detail: 'Ontem · Secretaria' },
+];
 
 export default function HomeScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <View>
+              <Text style={styles.greeting}>Bom dia,</Text>
+              <Text style={styles.studentName}>[Nome do aluno]</Text>
+            </View>
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>FL</Text>
+            </View>
+          </View>
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+          <View style={styles.classCard}>
+            <Text style={styles.nextClass}>Próxima aula · hoje, 19:10</Text>
+            <Text style={styles.className}>Cálculo I</Text>
+            <Text style={styles.classDetails}>Sala 204 · Bloco B · Prof. [Nome]</Text>
+          </View>
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
+          <View style={styles.shortcutGrid}>
+            {shortcuts.map((shortcut) => (
+              <View key={shortcut} style={styles.shortcut}>
+                <Text style={styles.shortcutText}>{shortcut}</Text>
+              </View>
+            ))}
+          </View>
 
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+          <Text style={styles.sectionTitle}>Avisos</Text>
+          <View style={styles.notices}>
+            {notices.map((notice) => (
+              <View key={notice.detail} style={styles.notice}>
+                <Text style={styles.noticeTitle}>{notice.title}</Text>
+                <Text style={styles.noticeDetail}>{notice.detail}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
   safeArea: {
     flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+    backgroundColor: colors.background,
   },
-  heroSection: {
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 24,
+  },
+  content: {
+    width: '100%',
+    maxWidth: 480,
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 16,
+  },
+  header: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  greeting: {
+    color: colors.muted,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  studentName: {
+    color: colors.text,
+    fontSize: 25,
+    lineHeight: 30,
+    fontWeight: '700',
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FCE4EB',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
   },
-  title: {
-    textAlign: 'center',
+  avatarText: {
+    color: colors.pink,
+    fontSize: 16,
+    fontWeight: '700',
   },
-  code: {
-    textTransform: 'uppercase',
+  classCard: {
+    minHeight: 116,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    marginBottom: 20,
+    borderRadius: 20,
+    backgroundColor: colors.pink,
   },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  nextClass: {
+    color: colors.white,
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: '600',
+  },
+  className: {
+    color: colors.white,
+    fontSize: 25,
+    lineHeight: 32,
+    fontWeight: '700',
+  },
+  classDetails: {
+    color: colors.white,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  shortcutGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 12,
+    marginBottom: 20,
+  },
+  shortcut: {
+    width: '48.2%',
+    minHeight: 72,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 16,
+    backgroundColor: colors.white,
+  },
+  shortcutText: {
+    color: colors.text,
+    fontSize: 15,
+    lineHeight: 20,
+    fontWeight: '500',
+  },
+  sectionTitle: {
+    color: colors.text,
+    fontSize: 18,
+    lineHeight: 24,
+    fontWeight: '700',
+    marginBottom: 18,
+  },
+  notices: {
+    gap: 20,
+  },
+  notice: {
+    minHeight: 65,
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 16,
+    backgroundColor: colors.white,
+  },
+  noticeTitle: {
+    color: colors.text,
+    fontSize: 15,
+    lineHeight: 19,
+    fontWeight: '600',
+  },
+  noticeDetail: {
+    color: colors.muted,
+    fontSize: 13,
+    lineHeight: 17,
   },
 });
